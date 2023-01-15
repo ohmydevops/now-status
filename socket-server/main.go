@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gobwas/ws"
@@ -8,22 +9,25 @@ import (
 )
 
 func main() {
-	http.ListenAndServe(":8080", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	var cars = [4]string{"Volvo", "BMW", "Ford", "Mazda"}
+	http.ListenAndServe(":8090", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		conn, _, _, err := ws.UpgradeHTTP(r, w)
 		if err != nil {
-			// handle error
+			log.Fatal(err)
 		}
 		go func() {
 			defer conn.Close()
 
 			for {
-				msg, op, err := wsutil.ReadClientData(conn)
+				_, op, err := wsutil.ReadClientData(conn)
 				if err != nil {
-					// handle error
+					log.Println(err)
 				}
-				err = wsutil.WriteServerMessage(conn, op, msg)
-				if err != nil {
-					// handle error
+				for i := 0; i < len(cars); i++ {
+					err = wsutil.WriteServerMessage(conn, op, []byte(cars[i]))
+					if err != nil {
+						log.Println(err)
+					}
 				}
 			}
 		}()
