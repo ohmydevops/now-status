@@ -129,4 +129,23 @@
             </div>
         </div>
     </body>
+    
+<script type="text/javascript">
+    if ("WebSocket" in window) {
+        var ws = new WebSocket("ws://127.0.0.1:8090");
+        ws.onopen = function () {
+            ws.send("Hello world");
+            console.log("Message is sent...");
+        };
+        ws.onmessage = function (evt) {
+            var received_msg = evt.data;
+            console.log("Message is received...");
+        };
+        ws.onclose = function () {
+            console.log("Connection is closed...");
+        };
+    } else {
+        alert("WebSocket NOT supported by your Browser!");
+    }
+</script>
 </html>

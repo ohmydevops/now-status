@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -21,13 +22,18 @@ func main() {
 			for {
 				_, op, err := wsutil.ReadClientData(conn)
 				if err != nil {
-					log.Println(err)
+					fmt.Println("Error receiving data: " + err.Error())
+					fmt.Println("Client disconnected")
+					return
 				}
 				for i := 0; i < len(cars); i++ {
 					err = wsutil.WriteServerMessage(conn, op, []byte(cars[i]))
 					if err != nil {
-						log.Println(err)
+						fmt.Println("Error sending data: " + err.Error())
+						fmt.Println("Client disconnected")
+						return
 					}
+					fmt.Println("Server message send: " + cars[i])
 				}
 			}
 		}()
