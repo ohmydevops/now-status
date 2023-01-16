@@ -1,0 +1,32 @@
+version: "3"
+
+services:
+    core-server-db:
+        image: "mysql:8.0"
+        container_name: core-server-db
+        ports:
+          - 127.0.0.1:3306:3306
+        environment:
+            MYSQL_ROOT_PASSWORD: "123456"
+            MYSQL_DATABASE: "nowstatus"
+        volumes:
+            - "core-server-db:/var/lib/mysql"
+        healthcheck:
+            test: ["CMD", "mysqladmin", "ping"]
+        restart: always
+
+    phpmyadmin:
+        image: "phpmyadmin:5"
+        container_name: phpmyadmin
+        environment:
+            PMA_HOST: core-server-db
+            PMA_PORT: 3306
+            UPLOAD_LIMIT: 1G
+        depends_on:
+            - core-server-db
+        restart: always
+        ports:
+          - 127.0.0.1:9090:80
+
+volumes:
+    core-server-db:
