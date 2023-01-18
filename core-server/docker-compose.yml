@@ -27,6 +27,17 @@ services:
         restart: always
         ports:
           - 127.0.0.1:9090:80
-
+    core-server-redis:
+        image: "redis:5"
+        container_name: core-server-redis
+        restart: always
+        command: redis-server --appendonly yes
+        ports:
+          - 127.0.0.1:6379:6379
+        volumes:
+            - "core-server-redis:/data"
+        healthcheck:
+            test: ["CMD", "redis-cli", "ping"]
 volumes:
     core-server-db:
+    core-server-redis:
